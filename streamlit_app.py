@@ -11,7 +11,7 @@ def logga_pass(user, ovning, mg, vikt, reps, sets, kommentar):
     fil = get_filename(user)
     rad = {
         "Datum": datetime.today().strftime('%Y-%m-%d'),
-        "\u00d6vning": ovning,
+        "Övning": ovning,
         "Muskelgrupp": mg,
         "Vikt": vikt,
         "Reps": reps,
@@ -31,7 +31,7 @@ def senaste_pass(user):
     return pd.read_csv(fil).tail(10)
 
 # ---------- Streamlit UI ----------
-st.set_page_config(page_title="Tr\u00e4ningslogg", page_icon="\ud83c\udfcb\ufe0f", layout="centered")
+st.set_page_config(page_title="Träningslogg", page_icon="📋", layout="centered")
 
 # Centrera innehåll för bättre mobilvy
 with st.container():
@@ -46,17 +46,17 @@ with st.container():
         </style>
     """, unsafe_allow_html=True)
 
-st.title("Tr\u00e4ningslogg \ud83c\udfcb\ufe0f")
+st.title("Träningslogg 📋")
 
-user = st.text_input("Anv\u00e4ndarnamn")
+user = st.text_input("Användarnamn")
 
 if user:
-    menu = st.radio("V\u00e4lj funktion", ["Logga pass", "Visa senaste pass"], horizontal=True)
+    menu = st.radio("Välj funktion", ["Logga pass", "Visa senaste pass"], horizontal=True)
 
     if menu == "Logga pass":
         st.header("Logga nytt pass")
         with st.form("logg_form"):
-            ovning = st.text_input("\u00d6vning")
+            ovning = st.text_input("Övning")
             mg = st.text_input("Muskelgrupp")
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -69,7 +69,7 @@ if user:
             submitted = st.form_submit_button("Spara pass")
             if submitted:
                 logga_pass(user, ovning, mg, vikt, reps, sets, kommentar)
-                st.success(f"Passet f\u00f6r {ovning} sparades!")
+                st.success(f"Passet för {ovning} sparades!")
 
     elif menu == "Visa senaste pass":
         st.header("Senaste 10 pass")
@@ -79,4 +79,4 @@ if user:
         else:
             st.dataframe(df, use_container_width=True)
 else:
-    st.info("Ange anv\u00e4ndarnamn f\u00f6r att b\u00f6rja.")
+    st.info("Ange användarnamn för att börja.")
