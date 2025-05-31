@@ -177,8 +177,9 @@ if user:
                     else:
                         st.success(f"{antal} set för {ovning} sparades!")
 
-            if st.button("➕ Lägg till set"):
-                st.session_state.set_data.append({"reps": 5, "vikt": 40.0, "klar": False})
+        # Flyttad utanför formuläret
+        if st.button("➕ Lägg till set"):
+            st.session_state.set_data.append({"reps": 5, "vikt": 40.0, "klar": False})
 
     elif menu == "Visa senaste pass":
         st.header("Senaste 10 pass")
