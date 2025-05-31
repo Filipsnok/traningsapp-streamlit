@@ -140,11 +140,11 @@ if user:
                 with col1:
                     st.markdown(f"**Set {i+1}**")
                 with col2:
-                    row["reps"] = st.number_input("Reps", value=row["reps"], min_value=1, step=1, key=f"reps_{i}", label_visibility="visible")
+                    row["reps"] = st.number_input("Reps", value=row["reps"], min_value=1, step=1, key=f"reps_{i}", label_visibility="collapsed", placeholder="Reps")
                 with col3:
                     c1, c2 = st.columns([4, 1])
                     with c1:
-                        row["vikt"] = st.number_input("Vikt", value=row["vikt"], min_value=0.0, step=1.0, key=f"vikt_{i}", label_visibility="visible")
+                        row["vikt"] = st.number_input("Vikt", value=row["vikt"], min_value=0.0, step=1.0, key=f"vikt_{i}", label_visibility="collapsed", placeholder="Vikt")
                     with c2:
                         st.markdown("kg")
                 df_history = hamta_ovningsdata(user, ovning)
