@@ -137,9 +137,9 @@ if user:
                 with col1:
                     st.markdown(f"**Set {i+1}**")
                 with col2:
-                    row["reps"] = st.number_input(f"Reps_{i}", value=row["reps"], min_value=1, step=1, key=f"reps_{i}")
+                    row["reps"] = st.number_input("Reps", value=row["reps"], min_value=1, step=1, key=f"reps_{i}")
                 with col3:
-                    row["vikt"] = st.number_input(f"Vikt_{i}", value=row["vikt"], min_value=0.0, step=1.0, key=f"vikt_{i}")
+                    row["vikt"] = st.number_input("Vikt", value=row["vikt"], min_value=0.0, step=1.0, key=f"vikt_{i}")
                     st.markdown("kg")
                 df_history = hamta_ovningsdata(user, ovning)
                 if not df_history.empty:
