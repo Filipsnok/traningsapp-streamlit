@@ -105,6 +105,9 @@ with st.container():
             padding-left: 1rem;
             padding-right: 1rem;
         }
+        input[type=number] {
+            width: 70px !important;
+        }
         </style>
     """, unsafe_allow_html=True)
 
@@ -125,7 +128,7 @@ if user:
             if senaste_rad is not None:
                 st.info(f"Senaste för {ovning}: {senaste_rad['Vikt']} kg x {senaste_rad['Reps']} reps x {senaste_rad['Set']} set")
 
-            st.markdown("**Set | Reps | Vikt (kg) | Klar | 🗑️**")
+            st.markdown("**Set | Reps | Vikt | Klar | 🗑️**")
 
             if "set_data" not in st.session_state:
                 st.session_state.set_data = [
@@ -137,10 +140,13 @@ if user:
                 with col1:
                     st.markdown(f"**Set {i+1}**")
                 with col2:
-                    row["reps"] = st.number_input("Reps", value=row["reps"], min_value=1, step=1, key=f"reps_{i}")
+                    row["reps"] = st.number_input("Reps", value=row["reps"], min_value=1, step=1, key=f"reps_{i}", label_visibility="visible")
                 with col3:
-                    row["vikt"] = st.number_input("Vikt", value=row["vikt"], min_value=0.0, step=1.0, key=f"vikt_{i}")
-                    st.markdown("kg")
+                    c1, c2 = st.columns([4, 1])
+                    with c1:
+                        row["vikt"] = st.number_input("Vikt", value=row["vikt"], min_value=0.0, step=1.0, key=f"vikt_{i}", label_visibility="visible")
+                    with c2:
+                        st.markdown("kg")
                 df_history = hamta_ovningsdata(user, ovning)
                 if not df_history.empty:
                     row_1rm = row["vikt"] * (1 + row["reps"] / 30)
