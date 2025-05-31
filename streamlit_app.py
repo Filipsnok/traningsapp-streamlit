@@ -177,7 +177,6 @@ if user:
                 st.warning("Inget set markerades som klart.")
             else:
                 st.success(f"{antal} set för {ovning} sparades!")
-                    st.success(f"{antal} set för {ovning} sparades!")
 
     elif menu == "Visa senaste pass":
         st.header("Senaste 10 pass")
