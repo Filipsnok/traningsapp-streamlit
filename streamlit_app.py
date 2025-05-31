@@ -7,6 +7,9 @@ import os
 def get_pr_filename(user):
     return f"rekord_{user}.csv"
 
+def get_filename(user):
+    return f"logg_{user}.csv"
+
 def logga_pr(user, ovning, vikt, reps):
     fil = get_pr_filename(user)
     ny_1rm = vikt * (1 + reps / 30)
@@ -17,7 +20,13 @@ def logga_pr(user, ovning, vikt, reps):
         if not tidigare_pr.empty:
             max_1rm = tidigare_pr["1RM"].max()
             if ny_1rm <= max_1rm:
-                return  # Ej nytt PR
+                return
+    rad = {
+        "Datum": datetime.today().strftime('%Y-%m-%d'),
+        "Övning": ovning,
+        "Vikt": vikt,
+        "Reps": reps
+    }
     df = pd.DataFrame([rad])
     if os.path.exists(fil):
         df.to_csv(fil, mode="a", index=False, header=False)
@@ -29,9 +38,6 @@ def visa_pr(user):
     if not os.path.exists(fil):
         return pd.DataFrame()
     return pd.read_csv(fil)
-
-
-    return f"logg_{user}.csv"
 
 def logga_pass(user, ovning, mg, vikt, reps, sets, kommentar):
     fil = get_filename(user)
@@ -84,7 +90,6 @@ def hamta_senaste_rad(user, ovning):
 # ---------- Streamlit UI ----------
 st.set_page_config(page_title="Träningslogg", page_icon="📋", layout="centered")
 
-# Centrera innehåll för bättre mobilvy
 with st.container():
     st.markdown("""
         <style>
@@ -145,38 +150,39 @@ if user:
                     row["klar"] = st.checkbox("", value=row["klar"], key=f"klar_{i}")
                 with col5:
                     if st.button("🗑️", key=f"del_{i}"):
-                        if st.confirm(f"Ta bort set {i+1}?"):
-                            st.session_state.set_data.pop(i)
-                            st.experimental_rerun()
+                        st.session_state.set_data.pop(i)
+                        st.experimental_rerun()
 
             if st.button("➕ Lägg till set"):
                 st.session_state.set_data.append({"reps": 5, "vikt": 40.0, "klar": False})
 
             kommentar = st.text_input("Kommentar")
             submitted = st.form_submit_button("Spara pass")
-            utforda_set = [row for row in st.session_state.set_data if row["klar"]]
-        total_lyft = sum(row["vikt"] * row["reps"] for row in utforda_set)
-        snittvikt = total_lyft / len(utforda_set) if utforda_set else 0
 
-        with st.expander("💪 Summering av passet"):
-            st.markdown(f"- Antal utförda set: **{len(utforda_set)}**")
-            st.markdown(f"- Total lyft vikt: **{total_lyft:.1f} kg**")
-            st.markdown(f"- Snittvikt per set: **{snittvikt:.1f} kg**")
-            st.markdown(f"- Kommentar: _{kommentar}_")
+            if submitted:
+                utforda_set = [row for row in st.session_state.set_data if row["klar"]]
+                total_lyft = sum(row["vikt"] * row["reps"] for row in utforda_set)
+                snittvikt = total_lyft / len(utforda_set) if utforda_set else 0
 
-        st.success("Passet är nu klart och du kan spara när du vill.")
-        st.info("Passet sparas automatiskt i minnet, men inte till fil förrän du klickar nedan.")
-        if st.button("💾 Spara pass till fil"):
-            antal = 0
-            for row in st.session_state.set_data:
-                if row["klar"]:
-                    antal += 1
-                    logga_pass(user, ovning, mg, row["vikt"], row["reps"], 1, kommentar)
-                logga_pr(user, ovning, row["vikt"], row["reps"])
-            if antal == 0:
-                st.warning("Inget set markerades som klart.")
-            else:
-                st.success(f"{antal} set för {ovning} sparades!")
+                with st.expander("💪 Summering av passet"):
+                    st.markdown(f"- Antal utförda set: **{len(utforda_set)}**")
+                    st.markdown(f"- Total lyft vikt: **{total_lyft:.1f} kg**")
+                    st.markdown(f"- Snittvikt per set: **{snittvikt:.1f} kg**")
+                    st.markdown(f"- Kommentar: _{kommentar}_")
+
+                st.success("Passet är nu klart och du kan spara när du vill.")
+                st.info("Passet sparas automatiskt i minnet, men inte till fil förrän du klickar nedan.")
+                if st.button("📂 Spara pass till fil"):
+                    antal = 0
+                    for row in st.session_state.set_data:
+                        if row["klar"]:
+                            antal += 1
+                            logga_pass(user, ovning, mg, row["vikt"], row["reps"], 1, kommentar)
+                            logga_pr(user, ovning, row["vikt"], row["reps"])
+                    if antal == 0:
+                        st.warning("Inget set markerades som klart.")
+                    else:
+                        st.success(f"{antal} set för {ovning} sparades!")
 
     elif menu == "Visa senaste pass":
         st.header("Senaste 10 pass")
